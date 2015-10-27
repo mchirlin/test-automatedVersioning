@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<contentHaul xmlns:a="http://www.appian.com/ae/types/2009">
+    <rule>
+        <name>LDAP_configureLDAPSynch</name>
+        <uuid>_a-0000db97-6310-8000-5130-010000010000_2314</uuid>
+        <description></description>
+        <parentUuid>_a-0000d62a-9e0e-8000-ac7a-680000680000_7543</parentUuid>
+        <visibility>
+            <advertise>false</advertise>
+            <hierarchy>true</hierarchy>
+            <indexable>true</indexable>
+            <quota>false</quota>
+            <searchable>true</searchable>
+            <system>false</system>
+            <unlogged>false</unlogged>
+        </visibility>
+        <definition>=load(&#xD;
+  local!names: #&quot;_a-0000db97-6310-8000-5130-010000010000_2393&quot;,&#xD;
+  local!baseDns: #&quot;_a-0000db97-6310-8000-5130-010000010000_2350&quot;,&#xD;
+  local!filters: #&quot;_a-0000db97-6310-8000-5130-010000010000_2349&quot;,&#xD;
+  local!groups: #&quot;_a-0000db97-6310-8000-5130-010000010000_2353&quot;,&#xD;
+  local!tested: repeat(length(local!filters), true),&#xD;
+  local!attributeValues: #&quot;_a-0000db98-7620-8000-5130-010000010000_2465&quot;,&#xD;
+  local!leftColumnAttributes: if(&#xD;
+    count(local!attributeValues) &gt; 15,&#xD;
+    rdrop(local!attributeValues, count(local!attributeValues) - 15),&#xD;
+    local!attributeValues&#xD;
+  ),&#xD;
+  local!rightColumnAttributes: ldrop(local!attributeValues, 15),&#xD;
+  local!items: apply(&#xD;
+    #&quot;_a-0000db97-6310-8000-5130-010000010000_2327&quot;,&#xD;
+    merge(&#xD;
+      local!names,&#xD;
+      local!baseDns,&#xD;
+      local!filters,&#xD;
+      local!groups,&#xD;
+      local!tested&#xD;
+    )&#xD;
+  ),&#xD;
+  local!itemsToken: local!items,&#xD;
+  local!selection,&#xD;
+  local!testResults,&#xD;
+  local!testResultsTitle,&#xD;
+  local!testResultsSubset,&#xD;
+  local!testResultsPagingInfo: #&quot;SYSTEM_SYSRULES_pagingInfo&quot;(1, 5),&#xD;
+  #&quot;SYSTEM_SYSRULES_formLayout&quot;(&#xD;
+    label: &quot;Configure LDAP Synchronization&quot;,&#xD;
+    instructions: &quot;&quot;,&#xD;
+    firstColumnContents: {&#xD;
+      #&quot;SYSTEM_SYSRULES_sectionLayout&quot;(&#xD;
+        label: &quot;Synchronization Settings&quot;,&#xD;
+        firstColumnContents: {&#xD;
+          #&quot;SYSTEM_SYSRULES_checkboxField&quot;(&#xD;
+            label: &quot;Enable LDAP Sync&quot;,&#xD;
+            choiceLabels: {&quot;Enabled&quot;},&#xD;
+            choiceValues: {true},&#xD;
+            value: if(ri!enabled,ri!enabled,null),&#xD;
+            saveInto: ri!enabled&#xD;
+          )&#xD;
+        },&#xD;
+        secondColumnContents: {&#xD;
+          if(&#xD;
+            ri!enabled,&#xD;
+            load(&#xD;
+              local!times: #&quot;_a-0000db98-7620-8000-5130-010000010000_2481&quot;(),&#xD;
+              #&quot;SYSTEM_SYSRULES_dropdownField&quot;(&#xD;
+                label: &quot;Sync Start Time&quot;,&#xD;
+                instructions: &quot;In order to use the new start time, you must republish the 'LDAP - Scheduled Job' process model&quot;,&#xD;
+                placeholderLabel: &quot;--Select time--&quot;,&#xD;
+                choiceLabels: local!times,&#xD;
+                choiceValues: local!times,&#xD;
+                value: ri!startTime,&#xD;
+                saveInto: a!save(&#xD;
+                  target: ri!startTime,&#xD;
+                  value: totime(save!value)&#xD;
+                )&#xD;
+              )&#xD;
+            ),&#xD;
+            {}&#xD;
+          )&#xD;
+        },&#xD;
+        isCollapsible: true&#xD;
+      ),&#xD;
+      #&quot;SYSTEM_SYSRULES_sectionLayout&quot;(&#xD;
+        label: &quot;Connection Settings&quot;,&#xD;
+        firstColumnContents: {&#xD;
+          #&quot;SYSTEM_SYSRULES_dropdownField&quot;(&#xD;
+            label: &quot;Protocol&quot;,&#xD;
+            placeholderLabel: &quot;--Select protocol--&quot;,&#xD;
+            choiceLabels: {&quot;ldap&quot;, &quot;ldaps&quot;},&#xD;
+            choiceValues: {&quot;ldap&quot;, &quot;ldaps&quot;},&#xD;
+            value: ri!protocol,&#xD;
+            saveInto:ri!protocol,&#xD;
+            required: true&#xD;
+          ),&#xD;
+          #&quot;SYSTEM_SYSRULES_textField&quot;(&#xD;
+            label: &quot;Server&quot;,&#xD;
+            value: ri!server,&#xD;
+            saveInto: ri!server,&#xD;
+            required: true&#xD;
+          ),&#xD;
+          #&quot;SYSTEM_SYSRULES_textField&quot;(&#xD;
+            label: &quot;Port&quot;,&#xD;
+            value: ri!port,&#xD;
+            saveInto: ri!port,&#xD;
+            required: true&#xD;
+          ),&#xD;
+          #&quot;SYSTEM_SYSRULES_textField&quot;(&#xD;
+            label: &quot;Timeout&quot;,&#xD;
+            value: ri!timeout,&#xD;
+            saveInto: ri!timeout,&#xD;
+            required: true&#xD;
+          )&#xD;
+        },&#xD;
+        secondColumnContents: {&#xD;
+          #&quot;SYSTEM_SYSRULES_textField&quot;(&#xD;
+            label: &quot;Secured Credential Store (SCS) Key&quot;,&#xD;
+            instructions: &quot;This is the key used for storing the administrator credentials for the LDAP server in the third-party credentials section of the admin console&quot;,&#xD;
+            value: ri!externalSystemKey,&#xD;
+            saveInto: ri!externalSystemKey,&#xD;
+            required: true&#xD;
+          ),&#xD;
+          #&quot;SYSTEM_SYSRULES_dropdownField&quot;(&#xD;
+            label: &quot;Connection Type&quot;,&#xD;
+            instructions: &quot;Set this field to ssl if using a non-standard keystore&quot;,&#xD;
+            placeholderLabel: &quot;--Select connection type--&quot;,&#xD;
+            choiceLabels: {&quot;clear&quot;, &quot;ssl&quot;},&#xD;
+            choiceValues: {&quot;clear&quot;, &quot;ssl&quot;},&#xD;
+            value: ri!connectionType,&#xD;
+            saveInto:ri!connectionType,&#xD;
+            required: true&#xD;
+          ),&#xD;
+          if (&#xD;
+            ri!connectionType = &quot;ssl&quot;,&#xD;
+            #&quot;SYSTEM_SYSRULES_textField&quot;(&#xD;
+              label: &quot;KeyStore Path&quot;,&#xD;
+              instructions: &quot;KeyStore path is necessary if using a self-signed certificate.&quot;,&#xD;
+              value: ri!keyStorePath,&#xD;
+              saveInto: ri!keyStorePath&#xD;
+            ),&#xD;
+            {}&#xD;
+          ),&#xD;
+          #&quot;SYSTEM_SYSRULES_checkboxField&quot;(&#xD;
+            label: &quot;Virtual List View Control Supported&quot;,&#xD;
+            instructions: &quot;If the server does not support the VLV control or paging is not required this should be disabled&quot;,&#xD;
+            choiceLabels: {&quot;Supported&quot;},&#xD;
+            choiceValues: {true},&#xD;
+            value: if(ri!vlvControlSupported,ri!vlvControlSupported,null),&#xD;
+            saveInto: ri!vlvControlSupported&#xD;
+          )&#xD;
+          /* TODO &#xD;
+           *&#xD;
+           * Add authentication field&#xD;
+           * Add referral field&#xD;
+           */&#xD;
+        },&#xD;
+        isCollapsible: true&#xD;
+      ),&#xD;
+      #&quot;SYSTEM_SYSRULES_sectionLayout&quot;(&#xD;
+        label: &quot;Group Membership&quot;,&#xD;
+        firstColumnContents: {&#xD;
+          #&quot;SYSTEM_SYSRULES_ButtonLayout&quot;(&#xD;
+            secondaryButtons: {&#xD;
+              /* TODO&#xD;
+               *&#xD;
+               * Use paging if vlvcontrol is set to true&#xD;
+               */&#xD;
+              #&quot;SYSTEM_SYSRULES_ButtonWidget&quot;(&#xD;
+                label: &quot;Test Filter&quot;,&#xD;
+                value: local!items[local!selection],&#xD;
+                saveInto: {&#xD;
+                  a!save(&#xD;
+                    target: local!testResults,&#xD;
+                    value: ldapsearch(&#xD;
+                      config: #&quot;_a-0000db97-6310-8000-5130-010000010000_2346&quot;(&#xD;
+                        externalSystemKey: ri!externalSystemKey,&#xD;
+                        baseDn: local!items[local!selection].baseDn,&#xD;
+                        protocol: ri!protocol,&#xD;
+                        server: ri!server,&#xD;
+                        port: ri!port,&#xD;
+                        connectionType: ri!connectionType,&#xD;
+                        keystorePath: ri!keystorePath,&#xD;
+                        vlvControlSupported: ri!vlvControlSupported,&#xD;
+                        timeOut: ri!timeout&#xD;
+                      ),&#xD;
+                      searchFilter: local!items[local!selection].filter,&#xD;
+                      attributes: reject(fn!isnull, append(local!leftColumnAttributes, local!rightColumnAttributes)),&#xD;
+                      pagingInfo: #&quot;SYSTEM_SYSRULES_pagingInfo&quot;(startIndex:1, batchSize: -1)&#xD;
+                    )&#xD;
+                  ),&#xD;
+                  a!save(&#xD;
+                    target: local!testResultsSubset,&#xD;
+                    value:  if(&#xD;
+                      index(index(local!testResults, &quot;result&quot;, 0), &quot;totalCount&quot;, 0) = 0,&#xD;
+                      null,&#xD;
+                      todatasubset(local!testResults.result.data, local!testResultsPagingInfo)&#xD;
+                    )&#xD;
+                  ),&#xD;
+                  a!save(local!testResultsTitle, local!items[local!selection].name),&#xD;
+                  a!save(&#xD;
+                    target: local!items[local!selection][1].tested, &#xD;
+                    value: local!testResults.success&#xD;
+                  )&#xD;
+                },&#xD;
+                disabled: local!selection = &quot;&quot;&#xD;
+              )&#xD;
+            }&#xD;
+          ),&#xD;
+          #&quot;SYSTEM_SYSRULES_gridLayout&quot;(&#xD;
+            label: &quot;Group Filters&quot;,&#xD;
+            instructions: &quot;When the LDAP Sync process runs, users matching each of the following filters will be created and added to the associated Appian group. Users not matching any of the following filters will be deactivated.&quot;,&#xD;
+            headerCells: {&#xD;
+              #&quot;SYSTEM_SYSRULES_gridLayoutHeaderCell&quot;(label: &quot;Display Name&quot;),&#xD;
+              #&quot;SYSTEM_SYSRULES_gridLayoutHeaderCell&quot;(label: &quot;Base DN&quot;),&#xD;
+              #&quot;SYSTEM_SYSRULES_gridLayoutHeaderCell&quot;(label: &quot;Filter&quot;),&#xD;
+              #&quot;SYSTEM_SYSRULES_gridLayoutHeaderCell&quot;(label: &quot;Appian Group&quot;),&#xD;
+              #&quot;SYSTEM_SYSRULES_gridLayoutHeaderCell&quot;(label: &quot;Tested&quot;),&#xD;
+              #&quot;SYSTEM_SYSRULES_gridLayoutHeaderCell&quot;(label: &quot;&quot;)&#xD;
+            },&#xD;
+            columnConfigs: {&#xD;
+              #&quot;SYSTEM_SYSRULES_gridLayoutColumnConfig&quot;(width: &quot;DISTRIBUTE&quot;),&#xD;
+              #&quot;SYSTEM_SYSRULES_gridLayoutColumnConfig&quot;(width: &quot;DISTRIBUTE&quot;),&#xD;
+              #&quot;SYSTEM_SYSRULES_gridLayoutColumnConfig&quot;(width: &quot;DISTRIBUTE&quot;),&#xD;
+              #&quot;SYSTEM_SYSRULES_gridLayoutColumnConfig&quot;(width: &quot;DISTRIBUTE&quot;),&#xD;
+              #&quot;SYSTEM_SYSRULES_gridLayoutColumnConfig&quot;(width: &quot;NARROW&quot;),&#xD;
+              #&quot;SYSTEM_SYSRULES_gridLayoutColumnConfig&quot;(width: &quot;NARROW&quot;)&#xD;
+            },&#xD;
+            rows: if(&#xD;
+              length(local!items) = 0,&#xD;
+              {},&#xD;
+              #&quot;SYSTEM_SYSRULES_applyComponents&quot;(&#xD;
+                #&quot;_a-0000db97-6310-8000-5130-010000010000_2321&quot;(&#xD;
+                  index:_, items: local!items, itemsToken: local!itemsToken&#xD;
+                ),&#xD;
+                enumerate(length(local!items)) + 1&#xD;
+              )&#xD;
+            ),&#xD;
+            selectable: true,&#xD;
+            selectionValue: local!selection,&#xD;
+            selectionSaveInto: {&#xD;
+              a!save(&#xD;
+                target: local!selection,&#xD;
+                value: if(&#xD;
+                  isnull(local!selection),&#xD;
+                  save!value,&#xD;
+                  difference(save!value, local!selection)&#xD;
+                )&#xD;
+              )&#xD;
+            },&#xD;
+            validations: {}&#xD;
+          ),&#xD;
+          #&quot;SYSTEM_SYSRULES_linkField&quot;(&#xD;
+            label: &quot;Add Link&quot;,&#xD;
+            labelPosition: &quot;COLLAPSED&quot;,&#xD;
+            links: #&quot;SYSTEM_SYSRULES_dynamicLink&quot;(&#xD;
+              label: &quot;+Add Item&quot;,&#xD;
+              value: #&quot;_a-0000db97-6310-8000-5130-010000010000_2327&quot;(name: &quot;&quot;),&#xD;
+              saveInto: {&#xD;
+                a!save(local!items, append(local!items, save!value)),&#xD;
+                a!save(local!itemsToken, append(local!itemsToken, save!value))&#xD;
+              }&#xD;
+            )&#xD;
+          ),&#xD;
+          if(&#xD;
+            isnull(local!testResults),&#xD;
+            {},&#xD;
+            if(&#xD;
+              or(&#xD;
+                local!testResults.success = false,&#xD;
+                local!testResults.result.totalCount = 0&#xD;
+              ),&#xD;
+              #&quot;SYSTEM_SYSRULES_gridField&quot;(&#xD;
+                label: local!testResultsTitle &amp; &quot; Test Results&quot;,&#xD;
+                totalCount: 1,&#xD;
+                columns: {&#xD;
+                  if(&#xD;
+                    local!testResults.success,&#xD;
+                    #&quot;SYSTEM_SYSRULES_gridTextColumn&quot;(label: &quot;Results&quot;, data: &quot;No results returned&quot;),&#xD;
+                    {&#xD;
+                      #&quot;SYSTEM_SYSRULES_gridTextColumn&quot;(&#xD;
+                        label: &quot;Error&quot;,&#xD;
+                        data: local!testResults.error&#xD;
+                      ),&#xD;
+                      #&quot;SYSTEM_SYSRULES_gridTextColumn&quot;(&#xD;
+                        label: &quot;Suggestion&quot;,&#xD;
+                        data: #&quot;_a-0000db99-ce59-8000-5130-010000010000_2738&quot;(local!testResults.error)&#xD;
+                      )&#xD;
+                    }&#xD;
+                  )&#xD;
+                },&#xD;
+                value: #&quot;SYSTEM_SYSRULES_pagingInfo&quot;(1,-1)&#xD;
+              ),&#xD;
+              #&quot;SYSTEM_SYSRULES_gridField&quot;(&#xD;
+                label: local!testResultsTitle &amp; &quot; Test Results&quot;,&#xD;
+                instructions: &quot;Results will only display fields with mapped attributes&quot;,&#xD;
+                totalCount: local!testResultsSubset.totalCount,&#xD;
+                columns: if(&#xD;
+                  length(ri!attributeValues) &gt; 0,&#xD;
+                  #&quot;SYSTEM_SYSRULES_applyComponents&quot;(&#xD;
+                    #&quot;_a-0000db98-7620-8000-5130-010000010000_2516&quot;(&#xD;
+                      index: _,&#xD;
+                      label: _,&#xD;
+                      field: _,&#xD;
+                      results: local!testResultsSubset.data&#xD;
+                    ),&#xD;
+                    merge(&#xD;
+                      enumerate(length(ri!attributeValues)) + 1,&#xD;
+                      index(&#xD;
+                        #&quot;_a-0000db98-7620-8000-5130-010000010000_2462&quot;,&#xD;
+                        where(&#xD;
+                          apply(#&quot;_a-0000db98-7620-8000-5130-010000010000_2514&quot;, ri!attributeValues)&#xD;
+                        )&#xD;
+                      ),&#xD;
+                      reject(fn!isnull, append(local!leftColumnAttributes, local!rightColumnAttributes))&#xD;
+                    )&#xD;
+                  ),&#xD;
+                  #&quot;SYSTEM_SYSRULES_gridTextColumn&quot;(&#xD;
+                    label: &quot;Raw data - Map attributes below&quot;,&#xD;
+                    data: local!testResultsSubset.data&#xD;
+                  )&#xD;
+                ),&#xD;
+                value: local!testResultsPagingInfo,&#xD;
+                saveInto: {&#xD;
+                  local!testResultsPagingInfo,&#xD;
+                  a!save(&#xD;
+                    target: local!testResultsSubset,&#xD;
+                    value:  if(&#xD;
+                      index(index(local!testResults, &quot;result&quot;, 0), &quot;totalCount&quot;, 0) = 0,&#xD;
+                      null,&#xD;
+                      todatasubset(local!testResults.result.data, local!testResultsPagingInfo)&#xD;
+                    )&#xD;
+                  )&#xD;
+                }&#xD;
+              )&#xD;
+            )&#xD;
+          ),&#xD;
+          #&quot;SYSTEM_SYSRULES_pickerFieldGroups&quot;(&#xD;
+            label: &quot;All LDAP Users Group&quot;,&#xD;
+            instructions: &quot;Users that are part of this group, but not returned by any of the above filters will be deactivated.&quot;,&#xD;
+            maxSelections: 1,&#xD;
+            value: ri!allUsersGroup,&#xD;
+            saveInto: ri!allUsersGroup,&#xD;
+            required: true&#xD;
+          )&#xD;
+        },&#xD;
+        validations: {&#xD;
+          if(&#xD;
+            and(&#xD;
+              and(local!items.tested),&#xD;
+              all(#&quot;_a-0000db98-7620-8000-5130-010000010000_2514&quot;, local!items.tested)&#xD;
+            ),&#xD;
+            {},&#xD;
+            #&quot;SYSTEM_SYSRULES_validationMessage&quot;(message: &quot;All filters must be successfully tested&quot;, validateAfter: &quot;SUBMIT&quot;)&#xD;
+          ),&#xD;
+          if(&#xD;
+            length(local!items) &gt; 0,&#xD;
+            {},&#xD;
+            #&quot;SYSTEM_SYSRULES_validationMessage&quot;(message: &quot;There must be at least one group filter defined&quot;, validateAfter: &quot;SUBMIT&quot;)&#xD;
+          )&#xD;
+        },&#xD;
+        isCollapsible: true&#xD;
+      ),&#xD;
+      #&quot;SYSTEM_SYSRULES_sectionLayout&quot;(&#xD;
+        label: &quot;User Attribute Mapping&quot;,&#xD;
+        firstColumnContents: {&#xD;
+          #&quot;SYSTEM_SYSRULES_applyComponents&quot;(&#xD;
+            #&quot;ee56964f-193c-44ae-aa4b-fd5e9d5f7461&quot;(&#xD;
+              columnAttributeLabels: rdrop(#&quot;_a-0000db98-7620-8000-5130-010000010000_2462&quot;, 15),&#xD;
+              columnAttributeValues: local!leftColumnAttributes,&#xD;
+              index: _,&#xD;
+              column: &quot;first&quot;,&#xD;
+              attributeValues: ri!attributeValues&#xD;
+            ),&#xD;
+            enumerate(15) + 1&#xD;
+          )&#xD;
+        },&#xD;
+        secondColumnContents: {&#xD;
+          #&quot;SYSTEM_SYSRULES_applyComponents&quot;(&#xD;
+            #&quot;ee56964f-193c-44ae-aa4b-fd5e9d5f7461&quot;(&#xD;
+              columnAttributeLabels: ldrop(#&quot;_a-0000db98-7620-8000-5130-010000010000_2462&quot;, 15),&#xD;
+              columnAttributeValues: local!rightColumnAttributes,&#xD;
+              index: _,&#xD;
+              column: &quot;second&quot;,&#xD;
+              attributeValues: ri!attributeValues&#xD;
+            ),&#xD;
+            enumerate(15) + 1&#xD;
+          )&#xD;
+        },&#xD;
+        isCollapsible: true&#xD;
+      )&#xD;
+    },&#xD;
+    secondColumnContents: {&#xD;
+      /* Add components here for a two-column form */&#xD;
+    },&#xD;
+    buttons: #&quot;SYSTEM_SYSRULES_ButtonLayout&quot;(&#xD;
+      primaryButtons: {&#xD;
+        #&quot;SYSTEM_SYSRULES_ButtonWidgetSubmit&quot;(&#xD;
+          label: &quot;Submit&quot;,&#xD;
+          style: &quot;PRIMARY&quot;,&#xD;
+          saveInto: {&#xD;
+            a!save(ri!userSynchGroupNames, local!items.name),&#xD;
+            a!save(ri!userSynchBaseDns, local!items.baseDn),&#xD;
+            a!save(ri!userSynchFilters, local!items.filter),&#xD;
+            a!save(ri!userSynchAppianGroups, local!items.group)&#xD;
+          }&#xD;
+        )&#xD;
+      },&#xD;
+      secondaryButtons: {&#xD;
+        #&quot;SYSTEM_SYSRULES_ButtonWidgetSubmit&quot;(&#xD;
+          label: &quot;Cancel&quot;,&#xD;
+          style: &quot;NORMAL&quot;,&#xD;
+          value: &quot;cancel&quot;,&#xD;
+          saveInto: ri!decision,&#xD;
+          skipValidation: true&#xD;
+        )&#xD;
+      }&#xD;
+    ),&#xD;
+    validations: {}&#xD;
+  )&#xD;
+)</definition>
+        <namedTypedValue>
+            <name>decision</name>
+            <type>
+                <name>string</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+            <value/>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>protocol</name>
+            <type>
+                <name>string</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+            <value/>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>server</name>
+            <type>
+                <name>string</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+            <value/>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>port</name>
+            <type>
+                <name>string</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+            <value/>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>userSynchBaseDns</name>
+            <type>
+                <name>Text?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>userSynchFilters</name>
+            <type>
+                <name>Text?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>userSynchAppianGroups</name>
+            <type>
+                <name>Group?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>userSynchGroupNames</name>
+            <type>
+                <name>Text?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>keystorePath</name>
+            <type>
+                <name>string</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+            <value/>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>connectionType</name>
+            <type>
+                <name>string</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+            <value/>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>attributeValues</name>
+            <type>
+                <name>Text?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>enabled</name>
+            <type>
+                <name>boolean</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>startTime</name>
+            <type>
+                <name>time</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>allUsersGroup</name>
+            <type>
+                <name>Group</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>userSynchTested</name>
+            <type>
+                <name>Boolean?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>externalSystemKey</name>
+            <type>
+                <name>string</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+            <value/>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>vlvControlSupported</name>
+            <type>
+                <name>boolean</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>timeout</name>
+            <type>
+                <name>int</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <preferredEditor>interface</preferredEditor>
+        <offlineEnabled>false</offlineEnabled>
+    </rule>
+    <roleMap public="true">
+        <role allowForAll="false" inherit="true" name="readers">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="true" name="authors">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="true" name="administrators">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="false" name="denyReaders">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="false" name="denyAuthors">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="false" name="denyAdministrators">
+            <users/>
+            <groups/>
+        </role>
+    </roleMap>
+    <typedValue>
+        <type>
+            <name>RuleTestConfig</name>
+            <namespace>http://www.appian.com/ae/types/2009</namespace>
+        </type>
+        <value>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string"/>
+                <a:nameRef>decision</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string"/>
+                <a:nameRef>protocol</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string"/>
+                <a:nameRef>server</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string"/>
+                <a:nameRef>port</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="a:Expression"/>
+                <a:nameRef>userSynchBaseDns</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="a:Expression"/>
+                <a:nameRef>userSynchFilters</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:nameRef>userSynchAppianGroups</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="a:Expression"/>
+                <a:nameRef>userSynchGroupNames</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string"/>
+                <a:nameRef>keystorePath</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string"/>
+                <a:nameRef>connectionType</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="a:Expression"/>
+                <a:nameRef>attributeValues</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="a:Expression"/>
+                <a:nameRef>enabled</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="a:Expression"/>
+                <a:nameRef>startTime</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="a:Group"/>
+                <a:nameRef>allUsersGroup</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="a:Expression"/>
+                <a:nameRef>userSynchTested</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string"/>
+                <a:nameRef>externalSystemKey</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="a:Expression"/>
+                <a:nameRef>vlvControlSupported</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="xsd:int"/>
+                <a:nameRef>timeout</a:nameRef>
+            </a:ruleInputTestConfigs>
+        </value>
+    </typedValue>
+</contentHaul>

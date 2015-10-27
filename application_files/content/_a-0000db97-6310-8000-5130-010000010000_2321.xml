@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<contentHaul xmlns:a="http://www.appian.com/ae/types/2009">
+    <rule>
+        <name>LDAP_configureLDAPSynchGroupRow</name>
+        <uuid>_a-0000db97-6310-8000-5130-010000010000_2321</uuid>
+        <description></description>
+        <parentUuid>_a-0000d62a-9e0e-8000-ac7a-680000680000_7543</parentUuid>
+        <visibility>
+            <advertise>false</advertise>
+            <hierarchy>true</hierarchy>
+            <indexable>true</indexable>
+            <quota>false</quota>
+            <searchable>true</searchable>
+            <system>false</system>
+            <unlogged>false</unlogged>
+        </visibility>
+        <definition>#&quot;SYSTEM_SYSRULES_gridRowLayout&quot;(
+  id: ri!index,
+  contents: {
+    #&quot;SYSTEM_SYSRULES_textField&quot;(
+      value: ri!items[ri!index].name,
+      saveInto: ri!items[ri!index].name,
+      required: true
+    ),
+    #&quot;SYSTEM_SYSRULES_textField&quot;(
+      value: ri!items[ri!index].baseDn,
+      saveInto: {
+        ri!items[ri!index].baseDn,
+        a!save(ri!items[ri!index].tested, null)
+      },
+      required: false
+    ),
+    #&quot;SYSTEM_SYSRULES_textField&quot;(
+      value: ri!items[ri!index].filter,
+      saveInto: {
+        ri!items[ri!index].filter,
+        a!save(ri!items[ri!index].tested, null)
+      },
+      required: true
+    ),
+    #&quot;SYSTEM_SYSRULES_pickerFieldGroups&quot;(
+      maxSelections: 1,
+      value: ri!items[ri!index].group,
+      saveInto: ri!items[ri!index].group,
+      required: true
+    ),
+    #&quot;SYSTEM_SYSRULES_imageField&quot;(
+      images: if(
+        ri!items[ri!index].tested = &quot;true&quot;,
+        #&quot;SYSTEM_SYSRULES_documentImage&quot;(
+          document: #&quot;SYSTEM_SYSRULES_iconIndicator&quot;(&quot;FACE_HAPPY&quot;),
+          altText: &quot;Passed&quot;,
+          caption: &quot;Passed&quot;
+        ),
+        if(
+          ri!items[ri!index].tested = &quot;false&quot;,
+          #&quot;SYSTEM_SYSRULES_documentImage&quot;(
+            document: #&quot;SYSTEM_SYSRULES_iconIndicator&quot;(&quot;FACE_SAD&quot;),
+            altText: &quot;Failed&quot;,
+            caption: &quot;Failed&quot;
+          ),
+          #&quot;SYSTEM_SYSRULES_documentImage&quot;(
+            document: #&quot;SYSTEM_SYSRULES_iconIndicator&quot;(&quot;FACE_INDIFFERENT&quot;),
+            altText: &quot;Untested&quot;,
+            caption: &quot;Untested&quot;
+          )
+        )
+      ),
+      size: &quot;ICON&quot;
+    ),
+    #&quot;SYSTEM_SYSRULES_linkField&quot;(
+      label: &quot;delete &quot; &amp; ri!index,
+      links: #&quot;SYSTEM_SYSRULES_dynamicLink&quot;(
+        label: char(10005),
+        value: ri!index,
+        saveInto: {
+          a!save(
+            target: ri!items,
+            value: remove(ri!items, save!value)),
+          /*` When modifying the size of the array used in a!applyComponents, */
+          /* make the same change in the &quot;token&quot; array variable               */
+          a!save(
+            target: ri!itemsToken,
+            value: remove(ri!itemsToken, save!value)
+          )
+        }
+      ),
+      align: &quot;CENTER&quot;
+    )
+  }
+)</definition>
+        <namedTypedValue>
+            <name>index</name>
+            <type>
+                <name>int</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>items</name>
+            <type>
+                <name>Variant</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>itemsToken</name>
+            <type>
+                <name>Variant</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <preferredEditor>legacy</preferredEditor>
+        <offlineEnabled>false</offlineEnabled>
+    </rule>
+    <roleMap public="true">
+        <role allowForAll="false" inherit="true" name="readers">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="true" name="authors">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="true" name="administrators">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="false" name="denyReaders">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="false" name="denyAuthors">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="false" name="denyAdministrators">
+            <users/>
+            <groups/>
+        </role>
+    </roleMap>
+    <typedValue>
+        <type>
+            <name>RuleTestConfig</name>
+            <namespace>http://www.appian.com/ae/types/2009</namespace>
+        </type>
+        <value>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string"/>
+                <a:nameRef>index</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string"/>
+                <a:nameRef>items</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:string"/>
+                <a:nameRef>itemsToken</a:nameRef>
+            </a:ruleInputTestConfigs>
+        </value>
+    </typedValue>
+</contentHaul>

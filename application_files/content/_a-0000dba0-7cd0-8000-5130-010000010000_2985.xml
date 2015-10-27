@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<contentHaul xmlns:a="http://www.appian.com/ae/types/2009">
+    <rule>
+        <name>LDAP_userSyncResults</name>
+        <uuid>_a-0000dba0-7cd0-8000-5130-010000010000_2985</uuid>
+        <description></description>
+        <parentUuid>_a-0000d62a-9e0e-8000-ac7a-680000680000_7543</parentUuid>
+        <visibility>
+            <advertise>false</advertise>
+            <hierarchy>true</hierarchy>
+            <indexable>true</indexable>
+            <quota>false</quota>
+            <searchable>true</searchable>
+            <system>false</system>
+            <unlogged>false</unlogged>
+        </visibility>
+        <definition>=load(
+  local!groups: reject(
+    fn!isnull,
+    union(
+      ri!groupsAdded,
+      ri!groupsRemoved,
+      ri!groupsFailed
+    )
+  ),
+  local!indices: where(
+    touniformstring(ri!oldValues) &lt;&gt; touniformstring(ri!newValues),
+    {}
+  ),
+  #&quot;SYSTEM_SYSRULES_formLayout&quot;(
+    label: &quot;Account Sync Results&quot;,
+    firstColumnContents: {
+      if(
+        length(local!indices) &gt; 0,
+        #&quot;SYSTEM_SYSRULES_gridField&quot;(
+          label: &quot;Profile Sync Results&quot;,
+          labelPosition: &quot;ABOVE&quot;,
+          totalCount: length(local!indices),
+          columns: {
+            #&quot;SYSTEM_SYSRULES_gridTextColumn&quot;(
+              label: &quot;Attribute&quot;,
+              data: index(
+                #&quot;_a-0000db98-7620-8000-5130-010000010000_2462&quot;,
+                local!indices,
+                {}
+              )
+            ),
+            #&quot;SYSTEM_SYSRULES_gridTextColumn&quot;(
+              label: &quot;Old Value&quot;,
+              data: index(
+                ri!oldValues,
+                local!indices,
+                {}
+              )
+            ),
+            #&quot;SYSTEM_SYSRULES_gridTextColumn&quot;(
+              label: &quot;New Value&quot;,
+              data: index(
+                ri!newValues,
+                local!indices,
+                {}
+              )
+            )
+          },
+          value: #&quot;SYSTEM_SYSRULES_pagingInfo&quot;(startIndex: 1, batchSize: 5),
+          saveInto: {},
+          validations: {}
+        ),
+        #&quot;SYSTEM_SYSRULES_richTextDisplayField&quot;(
+          value: #&quot;SYSTEM_SYSRULES_richTextItem&quot;(
+            text:&quot;No updates were made to your user profile&quot;,
+            style: &quot;STRONG&quot;
+          )
+        )
+      )
+    },
+    secondColumnContents: {
+      if(
+        length(local!groups) &gt; 0,
+        #&quot;SYSTEM_SYSRULES_gridField&quot;(
+          label: &quot;Group Sync Results&quot;,
+          labelPosition: &quot;ABOVE&quot;,
+          totalCount: length(local!groups),
+          columns: {
+            #&quot;SYSTEM_SYSRULES_gridTextColumn&quot;(
+              label: &quot;Group Name&quot;,
+              data: apply(
+                group(_, &quot;groupName&quot;),
+                local!groups
+              )
+            ),
+            #&quot;SYSTEM_SYSRULES_gridImageColumn&quot;(
+              label: &quot;Result&quot;,
+              data: apply(
+                #&quot;_a-0000db9c-9a68-8000-5130-010000010000_2861&quot;(
+                  group: _,
+                  groupsAdded: ri!groupsAdded,
+                  groupsRemoved: ri!groupsRemoved,
+                  groupsFailed: ri!groupsFailed
+                ),
+                local!groups
+              ),
+              size: &quot;ICON&quot;
+            )
+          },
+          value: #&quot;SYSTEM_SYSRULES_pagingInfo&quot;(startIndex: 1, batchSize: 5),
+          saveInto: {},
+          validations: {}
+        ),
+        #&quot;SYSTEM_SYSRULES_richTextDisplayField&quot;(
+          value: #&quot;SYSTEM_SYSRULES_richTextItem&quot;(
+            text:&quot;No updates were made to your group membership&quot;,
+            style: &quot;STRONG&quot;
+          )
+        )
+      )
+    },
+    buttons: #&quot;SYSTEM_SYSRULES_ButtonLayout&quot;(
+      primaryButtons: {
+        #&quot;SYSTEM_SYSRULES_ButtonWidgetSubmit&quot;(
+          label: &quot;Close&quot;,
+          style: &quot;PRIMARY&quot;,
+          saveInto: {}
+        )
+      }
+    ),
+    validations: {}
+  )
+)</definition>
+        <namedTypedValue>
+            <name>groupsAdded</name>
+            <type>
+                <name>Group?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>groupsRemoved</name>
+            <type>
+                <name>Group?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>groupsFailed</name>
+            <type>
+                <name>Group?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>updatedAttributes</name>
+            <type>
+                <name>Text?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>oldValues</name>
+            <type>
+                <name>Text?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>newValues</name>
+            <type>
+                <name>Text?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <preferredEditor>interface</preferredEditor>
+        <offlineEnabled>false</offlineEnabled>
+    </rule>
+    <roleMap public="true">
+        <role allowForAll="false" inherit="true" name="readers">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="true" name="authors">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="true" name="administrators">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="false" name="denyReaders">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="false" name="denyAuthors">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="false" name="denyAdministrators">
+            <users/>
+            <groups/>
+        </role>
+    </roleMap>
+    <typedValue>
+        <type>
+            <name>RuleTestConfig</name>
+            <namespace>http://www.appian.com/ae/types/2009</namespace>
+        </type>
+        <value>
+            <a:ruleInputTestConfigs>
+                <a:nameRef>groupsAdded</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:nameRef>groupsRemoved</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:nameRef>groupsFailed</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="a:Expression"/>
+                <a:nameRef>updatedAttributes</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="a:Expression"/>
+                <a:nameRef>oldValues</a:nameRef>
+            </a:ruleInputTestConfigs>
+            <a:ruleInputTestConfigs>
+                <a:value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" xsi:type="a:Expression"/>
+                <a:nameRef>newValues</a:nameRef>
+            </a:ruleInputTestConfigs>
+        </value>
+    </typedValue>
+</contentHaul>

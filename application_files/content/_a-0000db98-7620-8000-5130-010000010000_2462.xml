@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<contentHaul xmlns:a="http://www.appian.com/ae/types/2009">
+    <constant>
+        <name>LDAP_USER_ATTRIBUTE_LABELS</name>
+        <uuid>_a-0000db98-7620-8000-5130-010000010000_2462</uuid>
+        <description></description>
+        <parentUuid>_a-0000d62a-9e0e-8000-ac7a-680000680000_7543</parentUuid>
+        <visibility>
+            <advertise>false</advertise>
+            <hierarchy>true</hierarchy>
+            <indexable>true</indexable>
+            <quota>false</quota>
+            <searchable>true</searchable>
+            <system>false</system>
+            <unlogged>false</unlogged>
+        </visibility>
+        <typedValue>
+            <type>
+                <name>Text?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+            <value>
+                <el>Thumbnail Photo</el>
+                <el>Username</el>
+                <el>First Name</el>
+                <el>Middle Name</el>
+                <el>Last Name</el>
+                <el>Display Name</el>
+                <el>Email</el>
+                <el>Phone Home</el>
+                <el>Phone Mobile</el>
+                <el>Phone Office</el>
+                <el>Address City</el>
+                <el>Address Country</el>
+                <el>Address Line1</el>
+                <el>Address Line2</el>
+                <el>Address Line3</el>
+                <el>Address Postal Code</el>
+                <el>Address Province</el>
+                <el>Address State</el>
+                <el>Supervisor Username</el>
+                <el>Title</el>
+                <el>Custom 1</el>
+                <el>Custom 2</el>
+                <el>Custom 3</el>
+                <el>Custom 4</el>
+                <el>Custom 5</el>
+                <el>Custom 6</el>
+                <el>Custom 7</el>
+                <el>Custom 8</el>
+                <el>Custom 9</el>
+                <el>Custom 10</el>
+            </value>
+        </typedValue>
+    </constant>
+    <roleMap public="true">
+        <role allowForAll="false" inherit="true" name="readers">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="true" name="authors">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="true" name="administrators">
+            <users>
+                <userUuid>mchirlin</userUuid>
+            </users>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="false" name="denyReaders">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="false" name="denyAuthors">
+            <users/>
+            <groups/>
+        </role>
+        <role allowForAll="false" inherit="false" name="denyAdministrators">
+            <users/>
+            <groups/>
+        </role>
+    </roleMap>
+</contentHaul>
